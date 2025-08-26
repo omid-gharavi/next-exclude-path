@@ -4,11 +4,11 @@
   "description": "Next.js package for exclude components from the chosen path in layout file",
   "license": "MIT",
   "author": {
-    "name": "Omid Gharavi",
+    "name": "@Omid-Gharavi/next-exclude-path",
     "email": "omidgharavi82@gmail.com"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@omid-gharavi"
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "React",
