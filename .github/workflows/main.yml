@@ -2,6 +2,7 @@ name: Node.js Package
 
 permissions:
   contents: read
+  packages: write
 on:
   push:
     branches:
@@ -15,9 +16,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 22
-          registery-url: https://registry.npmjs.org/
+          registery-url: https://npm.pkg.github.com/
           scope: '@Omid-Gharavi'
       - run: npm publish
       - run: npm install
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
