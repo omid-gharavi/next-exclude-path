@@ -1,0 +1,1 @@
+Next.js package for exclude components from the chosen path in layout file
