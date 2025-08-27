@@ -1,0 +1,53 @@
+name: publish exclude path package
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_and_packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Package
+        run: npm run build
+      - name: Package the app
+        run: npm pack
+      - name: Package the app
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: "*.tgz"
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: [build_and_packages]
+    steps:
+      - name: Download Package
+        uses: actions/download-artifact@v2
+        with:
+          name: package
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registery-url: 'https://npm.pkg.github.com/'
+          scope: '@omid-gharavi'
+      - run: echo "registery=https://npm.pkg.github.com/@omid-gharavi" >> .npmrc
+      - run: npm publish ${ls *.tgz}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+
+
+
+          
