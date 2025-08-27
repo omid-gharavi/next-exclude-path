@@ -43,6 +43,6 @@ jobs:
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@omid-gharavi'
       - run: echo "registery=https://npm.pkg.github.com/@omid-gharavi" >> .npmrc
-      - run: npm publish ${ls *.tgz}
+      - run: npm publish *.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
