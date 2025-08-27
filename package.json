@@ -1,10 +1,10 @@
 {
-  "name": "next-exclude-path",
+  "name": "@omid-gharavi/next-exclude-path",
   "version": "1.0.1",
   "description": "Next.js package for exclude components from the chosen path in layout file",
   "license": "MIT",
   "author": {
-    "name": "@Omid-Gharavi/next-exclude-path",
+    "name": "Omid Gharavi",
     "email": "omidgharavi82@gmail.com"
   },
   "publishConfig": {
