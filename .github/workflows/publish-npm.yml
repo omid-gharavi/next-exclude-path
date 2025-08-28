@@ -13,7 +13,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
       - name: Install Dependencies
         run: npm install
       - name: Build Package
@@ -43,6 +43,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@omid-gharavi'
       - run: echo "@omid-gharavi:registry=https://npm.pkg.github.com/" >> .npmrc
-      - run: npm publish *.tgz
+      - name: Publish package
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
