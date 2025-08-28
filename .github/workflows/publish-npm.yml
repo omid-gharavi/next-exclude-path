@@ -17,7 +17,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build Package
-        run: npm run rollup
+        run: npm run build
       - name: Package the app
         run: npm pack
       - name: Package the app
@@ -43,6 +43,6 @@ jobs:
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@omid-gharavi'
       - run: echo "@omid-gharavi:registry=https://npm.pkg.github.com/" >> .npmrc
-      - run: npm publish *.tgz
+      - run: npm publish {ls *.tgz}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
