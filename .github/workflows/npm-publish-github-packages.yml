@@ -1,9 +1,8 @@
 name: Node.js Package
 
 on:
-  release:
-    # run when a release is published (safer than 'created' if you only want final releases)
-    types: [published]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
