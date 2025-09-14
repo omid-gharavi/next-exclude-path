@@ -3,8 +3,7 @@ name: Publish Node package to GitHub Packages
 # Prefer publishing on tags. If you want to publish on main commits, add branches: [ main ] here.
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches: [ main ]
 
 permissions:
   contents: read
