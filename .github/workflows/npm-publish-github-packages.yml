@@ -1,6 +1,5 @@
 name: Publish Node package to GitHub Packages
 
-# Prefer publishing on tags. If you want to publish on main commits, add branches: [ main ] here.
 on:
   push:
     branches: [ main ]
@@ -33,23 +32,20 @@ jobs:
         with:
           node-version: 20
           registry-url: https://npm.pkg.github.com/
-          # configure the scope to the repository owner so setup-node writes the correct auth entry
           scope: "@${{ github.repository_owner }}"
       - run: npm ci
       - name: Build (optional)
         run: npm run build || echo "no build script"
       - name: Create .npmrc (fallback)
         run: |
-          # Use the GITHUB_TOKEN to authenticate to the GitHub npm registry.
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-          # Set the registry for the owner/org scope so scoped publishes go to GitHub Packages
           echo "@${GITHUB_REPOSITORY_OWNER}:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "always-auth=true" >> ~/.npmrc
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_PAT }}
       - name: Publish to GitHub Packages
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.REPO_PAT }}
         run: |
           # If you use a scoped package (recommended) and want it public, --access public is valid.
           # If your package name is not scoped, omit --access public. Make sure package.json "name" is "@OWNER/name".
