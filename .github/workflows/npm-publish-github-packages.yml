@@ -1,8 +1,10 @@
-name: Node.js Package
+name: Publish Node package to GitHub Packages
 
+# Prefer publishing on tags. If you want to publish on main commits, add branches: [ main ] here.
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
 
 permissions:
   contents: read
@@ -22,29 +24,34 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0   # useful if you depend on tags/versions
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://npm.pkg.github.com/   # setup-node will set up auth for the runner
+          registry-url: https://npm.pkg.github.com/
+          # configure the scope to the repository owner so setup-node writes the correct auth entry
+          scope: "@${{ github.repository_owner }}"
       - run: npm ci
-      - name: (optional) build
+      - name: Build (optional)
         run: npm run build || echo "no build script"
-      # Fallback: create .npmrc if setup-node didn't do it or you want explicit control
       - name: Create .npmrc (fallback)
         run: |
+          # Use the GITHUB_TOKEN to authenticate to the GitHub npm registry.
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-          echo "@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          # Set the registry for the owner/org scope so scoped publishes go to GitHub Packages
+          echo "@${GITHUB_REPOSITORY_OWNER}:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "always-auth=true" >> ~/.npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # If you want the package public and scoped, add --access public
-        run: npm publish --registry https://npm.pkg.github.com/ --access public || npm publish --registry https://npm.pkg.github.com/
+        run: |
+          # If you use a scoped package (recommended) and want it public, --access public is valid.
+          # If your package name is not scoped, omit --access public. Make sure package.json "name" is "@OWNER/name".
+          npm publish --registry https://npm.pkg.github.com/ --access public || npm publish --registry https://npm.pkg.github.com/
