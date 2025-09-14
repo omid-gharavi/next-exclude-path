@@ -1,0 +1,48 @@
+name: Node.js Package
+
+on:
+  release:
+    # run when a release is published (safer than 'created' if you only want final releases)
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # useful if you depend on tags/versions
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/   # setup-node will set up auth for the runner
+      - run: npm ci
+      - name: (optional) build
+        run: npm run build || echo "no build script"
+      # Fallback: create .npmrc if setup-node didn't do it or you want explicit control
+      - name: Create .npmrc (fallback)
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          echo "@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "always-auth=true" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # If you want the package public and scoped, add --access public
+        run: npm publish --registry https://npm.pkg.github.com/ --access public || npm publish --registry https://npm.pkg.github.com/
