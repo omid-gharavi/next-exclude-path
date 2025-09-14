@@ -1,48 +1,33 @@
-name: publish exclude path package
+name: Node.js Package
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [created]
 
 jobs:
-  build_and_packages:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Install Dependencies
-        run: npm install
-      - name: Build Package
-        run: npm run build
-      - name: Package the app
-        run: npm pack
-      - name: Package the app
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: "*.tgz"
-  publish:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+
+  publish-gpr:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       packages: write
-    needs: [build_and_packages]
+      contents: read
     steps:
-      - name: Download Package
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
         with:
-          name: package
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://npm.pkg.github.com/'
-          scope: '@omid-gharavi'
-      - run: echo "@omid-gharavi:registry=https://npm.pkg.github.com/" >> .npmrc
-      - run: npm publish *.tgz
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+      - run: npm ci
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
