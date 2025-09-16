@@ -1,8 +1,16 @@
-name: Node.js Package
+name: Node.js Package (publish-test)
 
 on:
   release:
     types: [published]
+  workflow_dispatch: {}
+  push:
+    tags:
+      - 'v*'        # use `git tag v1.2.3 && git push origin v1.2.3` to test
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
@@ -27,6 +35,8 @@ jobs:
           node-version: 20
           registry-url: https://npm.pkg.github.com/
       - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: |
+          echo "DEBUG: publishing (dry-run)"; npm publish --dry-run
+      # when confirmed working, remove --dry-run and use NODE_AUTH_TOKEN
+      # env:
+      #   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
