@@ -7,6 +7,10 @@
     "name": "Omid Gharavi",
     "email": "omidgharavi82@gmail.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omid-gharavi/next-exclude-path.git"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
