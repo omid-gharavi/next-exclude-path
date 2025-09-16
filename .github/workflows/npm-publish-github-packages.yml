@@ -27,7 +27,7 @@ jobs:
 
       - name: Publish to npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.REPO_PAT}}   # must be an npm automation token
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}   # must be an npm automation token
         run: |
           # optional: sanity check
           npm --version
